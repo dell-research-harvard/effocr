@@ -1,9 +1,6 @@
-<<<<<<< HEAD
 # adapted in part from
 # https://github.com/KevinMusgrave/pytorch-metric-learning/blob/master/src/pytorch_metric_learning/samplers/m_per_class_sampler.py
 
-=======
->>>>>>> 33245143a7271b8ad6d14e48ccb428c0fdee99fc
 from pytorch_metric_learning.utils import common_functions as c_f
 from torch.utils.data.sampler import Sampler
 import torch
