@@ -1,1 +1,151 @@
-# effocr
+# EffOCR
+
+This repository contains the official implementation of [EffOCR](link to arxiv). EffOCR is an OCR architecture that emphasizes sample (and computational) efficiency without compromising on accuracy! EffOCR accomplishes this by treating text recognition not as a sequence/language modeling task, but as a metric learning/image retrieval task.
+
+![EffOCR vs. Seq2Seq](misc/arch.png)
+
+EffOCR is comprised of two modules, trained separately: 
+- a **localizer**, an object detector that is fine-tuned for the purpose of detecting characters/letters/glyphs/words in an image of text; and 
+- a **recognizer**, which classifies/assigns identities to localized glyphs.
+
+In this repo, we provide tools for training your own EffOCR models for your particular documents of interest, as well as for running fast and accurate inference on new samples.
+
+## Installation
+
+Clone this repo, then install [requirements.txt](requirements.txt) in an environment with `Python >= 3.7` and `Pytorch >= 1.7.0, <= 1.10.0`. 
+
+```bash
+git clone https://github.com/jscarlson/ocr-as-retrieval.git
+cd ocr-as-retrieval
+pip install -r requirements.txt
+```
+
+## Dataset Formatting
+
+For the purposes of training and evaluating EffOCR localizers and recognizers, we require that your dataset of interest is transcribed into the [COCO format](https://www.immersivelimit.com/tutorials/create-coco-annotations-from-scratch) with annotations at the character level, and with image level text fields that denote the transcription of the text line image, e.g., 
+
+```
+...
+  "images": [
+    {
+      "id": 13,
+      "width": 958,
+      "height": 46,
+      "file_name": "194906.png",
+      "text": "they arrived overland from San Fran-"
+    },
+...
+```
+
+The [scripts](scripts/) directory contains a few useful utilities for combining, splitting, and subsetting COCO-formatted JSON files.
+
+This COCO-formatted dataset can be used directly for localizer training, and can be converted into another format suitable for recognizer training with a single script, described below.
+
+By default, English and Japanese language datasets are supported by EffOCR. Other languages are certainly compatible with the EffOCR framework, but it might require that you fork and modify this codebase as appropriate for your application of interest.
+
+## Training
+
+### Localizer 
+
+Presently, EffOCR localizer models can be trained either via the provided [train_localizer_d2.py](train_effocr_localizer_d2.py) script **or**  via the [MMDetection](https://github.com/open-mmlab/mmdetection) or [YOLOv5](https://github.com/ultralytics/yolov5) object detection libraries. We aim to provide built-in support for MMDetection and YOLOv5 localizer training in the near future. 
+
+To use the Detectron2-backend training localizer script, a character localization dataset must first be [locally registered](https://detectron2.readthedocs.io/en/latest/tutorials/datasets.html). As one example, calling the [train_localizer_d2.py](train_effocr_localizer_d2.py) script could look like:
+
+```bash
+python ./train_localizer_d2.py \
+    --name <Weights and Bias run name> \
+    --dataset_name <name of Detectron2 dataset to be registered> \
+    --dataset_root <absolute path to root dir for COCO formatted data> \
+    --train_file <name of COCO JSON training file> \
+    --val_file <name of COCO JSON val file>\
+    --test_file <name of COCO JSON test file> \
+    --images_dir <name dir in root with images for training, testing, validation> \
+    --init_ckpt <absolute path to saved model checkpoint, if applicable> \
+     --num-gpus <N>
+```
+
+### Recognizer
+
+The script [format_effocr_recognizer_dataset.py](format_effocr_recognizer_dataset.py) takes in a COCO-style dataset that would be used for e.g. localizer training and outputs a dataset amenable to recognizer training, which is essentially a dataset with a file structure compatible with a slightly modified version of a PyTorch [ImageFolder](https://pytorch.org/vision/main/generated/torchvision.datasets.ImageFolder.html) dataset class. Specifically, the script creates a training dataset by combining synthetic charaters generated from a wide collection of fonts with user-provided character crops from source documents. 
+
+```bash
+python format_effocr_recognizer_dataset.py \
+    --image_dir <absolute path to COCO image dir> \  
+    --coco_jsons <comma-separated absolute paths to COCO JSONs, e.g., /path/to/train.json,/path/to/test.json,/path/to/val.json> \
+    --crops_save_dir <absolute path for saving glyph crops, an intermediate output> \
+    --cat_id <COCO category ID for cropping> \                         
+    --clip_to_top_and_bottom              
+    --font_dir <absolute path to fonts for synthetic data mix in> \
+    --charset_dir <path to character sets for rendering synthetic data> \  
+    --dataset_save_dir <absolute path for saving recognizer dataset> \
+    --padding 0.05                  
+```
+
+Recognizer models are trained via the [train_effocr_recognizer.py](train_effocr_recognizer.py) script. Example usage is as follows:
+
+```bash
+python ./train_recognizer.py \
+    --root_dir_path <abs path to recognizer dataset> \
+    --train_ann_path <abs path to train annotations> \
+    --val_ann_path <abs path to val annotations> \
+    --test_ann_path <abs path to test annotations> \
+    --run_name <Weights and Biases run name for logging> \
+    --auto_model_timm <timm model name (see below)> \
+    --batch_size <e.g. 128> \
+    --num_epochs <e.g. 60> \
+    --num_passes <e.g. 1 for Japanese, 10 for English> \
+    --lang <'en' for English character or 'jp' for Japanese> \
+    --lr <e.g. 2e-5> \
+    --imsize <must be compatible with timm model input> \
+    --infer_hardneg_k <e.g. 8> \
+    --hns_txt_path <used in a second run, or if you have already created a hns.txt file, see below>
+```
+
+To view a list of available timm models that one can use as encoders for the EffOCR recognizer, one can run:
+
+```python
+import timm
+print(timm.list_models(pretrained=True))
+```
+
+We recommend many of the models used in the [EffOCR paper](link to arxiv), including:
+ - `mobilenetv3_small_050`
+ - `convnext_tiny`
+ - `xcit_small_12_p8_224`
+
+#### Hard Negative Mining and Training
+
+Typically, recognizer models are trained in two steps: a first training run is essentially just used to mine hard negatives and a second training run trains a model incorporating those hard negatives (N.B. this second model does not need to be fine-tuned from the model output in the first run, such that if you have already gathered info on hard negatives, you can jump right to hard negative training). Adding the `--infer_hardneg_k` argument generates a list of $k$ hard negatives (most visually similar charaters) for each character in the dataset and saves this list to a text file called `hns.txt`. Passing in the absolute path of this text file of generated hard negatives via the `--hns_txt_path` argument will utilize the enclosed hard negative information in a training run, typically increasing recognizer performance substantially.
+
+## Inference
+
+Text line inference is done via either the [infer_effocr.py](infer_effocr.py) or [infer_effocr_onnx_multi.py](infer_effocr_onnx_multi.py) scripts. [infer_effocr.py](infer_effocr.py) supports Detectron2- or MMDetection-backend localizers. It does _not_ currently support YOLOv5-backend localizers. 
+
+An example call to [infer_effocr.py](infer_effocr.py) would look like:
+
+```bash
+python ./infer_ocr.py \
+    --image_dir <path to text line images to be inferenced> \
+    --infer_over_img_dir \
+    --auto_model_timm <timm model name (same as used in recognizer training) \
+    --recognizer_dir <directory with saved recognizer model as `enc_best.pth`> \
+    --localizer_dir <directory with saved localizer model as `best_bbox_mAP.pth` and config as `*.yaml` or `*.py`> \
+    --lang <'en' for English or 'jp' for Japanese>
+    --rcnn_score_thr <e.g. 0.3>
+    --save_output <optional, directory to save predictions to>
+```
+
+The [infer_effocr_onnx_multi.py](infer_effocr_onnx_multi.py) script accepts localizer models in ONNX format from any of the backends mentioned above. It also expects a recognizer in ONNX format. A [conversion script](https://github.com/jscarlson/ocr-as-retrieval/blob/main/scripts/recognizer_onnx_export.py) is provided for convenience. [infer_effocr_onnx_multi.py](infer_effocr_onnx_multi.py) runs _only_ on the CPU and implements multithreading in an attempt to minimize inference time. An example call to `[infer_effocr_onnx_multi.py](infer_effocr_onnx_multi.py) would look like:
+
+```bash
+python ./infer_ocr_onnx_multi.py \
+    --image_dir <path to text line images to be inferenced> \
+    --recognizer_dir <directory with saved recognizer model as `enc_best.onnx`> \
+    --localizer_dir <directory with saved localizer model as `best_bbox_mAP.onnx`> \
+    --localier_backend <where the localizer model was trained, one of `mmdetection`, `yolo`, or `detectron2` \
+    --lang <'en' for English or 'jp' for Japanese> \
+    --localizer_iou_thresh <e.g. 0.01> \
+    --localizer_conf_thresh <e.g. 0.35> \
+    --num_threads <N> \
+    --save_output <optional, directory to save predictions to>
+```
