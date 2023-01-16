@@ -54,6 +54,7 @@ To use the Detectron2-backend training localizer script, a character localizatio
 ```bash
 python ./train_effocr_localizer_d2.py \
     --name <Weights and Biases run name> \
+    --config <absolute path to D2 config> \
     --dataset_name <name of Detectron2 dataset to be registered> \
     --dataset_root <absolute path to root dir for COCO formatted data> \
     --train_file <name of COCO JSON training file> \
@@ -61,7 +62,10 @@ python ./train_effocr_localizer_d2.py \
     --test_file <name of COCO JSON test file> \
     --images_dir <name dir in root with images for training, testing, validation> \
     --init_ckpt <absolute path to saved model checkpoint, if applicable> \
-     --num-gpus <N>
+    --num_epochs <e.g. 100> \
+    --lr <e.g. 1e-5> \
+    --batch_size <e.g. 2> \
+    --num-gpus <N>
 ```
 
 ### Recognizer
