@@ -47,13 +47,13 @@ By default, English and Japanese language datasets are supported by EffOCR. Othe
 
 ### Localizer 
 
-Presently, EffOCR localizer models can be trained either via the provided [train_localizer_d2.py](train_effocr_localizer_d2.py) script **or**  via the [MMDetection](https://github.com/open-mmlab/mmdetection) or [YOLOv5](https://github.com/ultralytics/yolov5) object detection libraries. We aim to provide built-in support for MMDetection and YOLOv5 localizer training in the near future. 
+Presently, EffOCR localizer models can be trained either via the provided [train_effocr_localizer_d2.py](train_effocr_localizer_d2.py) script **or**  via the [MMDetection](https://github.com/open-mmlab/mmdetection) or [YOLOv5](https://github.com/ultralytics/yolov5) object detection libraries. We aim to provide built-in support for MMDetection and YOLOv5 localizer training in the near future. 
 
-To use the Detectron2-backend training localizer script, a character localization dataset must first be [locally registered](https://detectron2.readthedocs.io/en/latest/tutorials/datasets.html). As one example, calling the [train_localizer_d2.py](train_effocr_localizer_d2.py) script could look like:
+To use the Detectron2-backend training localizer script, a character localization dataset must first be [locally registered](https://detectron2.readthedocs.io/en/latest/tutorials/datasets.html). As one example, calling the [train_effocr_localizer_d2.py](train_effocr_localizer_d2.py) script could look like:
 
 ```bash
 python ./train_effocr_localizer_d2.py \
-    --name <Weights and Bias run name> \
+    --name <Weights and Biases run name> \
     --dataset_name <name of Detectron2 dataset to be registered> \
     --dataset_root <absolute path to root dir for COCO formatted data> \
     --train_file <name of COCO JSON training file> \
