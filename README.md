@@ -82,7 +82,7 @@ python format_effocr_recognizer_dataset.py \
     --font_dir <absolute path to fonts for synthetic data mix in> \
     --charset_dir <path to character sets for rendering synthetic data> \  
     --dataset_save_dir <absolute path for saving recognizer dataset> \
-    --padding 0.05                  
+    --padding <e.g. 0.05>         
 ```
 
 Recognizer models are trained via the [train_effocr_recognizer.py](train_effocr_recognizer.py) script. Example usage is as follows:
