@@ -52,7 +52,7 @@ Presently, EffOCR localizer models can be trained either via the provided [train
 To use the Detectron2-backend training localizer script, a character localization dataset must first be [locally registered](https://detectron2.readthedocs.io/en/latest/tutorials/datasets.html). As one example, calling the [train_localizer_d2.py](train_effocr_localizer_d2.py) script could look like:
 
 ```bash
-python ./train_localizer_d2.py \
+python ./train_effocr_localizer_d2.py \
     --name <Weights and Bias run name> \
     --dataset_name <name of Detectron2 dataset to be registered> \
     --dataset_root <absolute path to root dir for COCO formatted data> \
@@ -84,7 +84,7 @@ python format_effocr_recognizer_dataset.py \
 Recognizer models are trained via the [train_effocr_recognizer.py](train_effocr_recognizer.py) script. Example usage is as follows:
 
 ```bash
-python ./train_recognizer.py \
+python ./train_effocr_recognizer.py \
     --root_dir_path <abs path to recognizer dataset> \
     --train_ann_path <abs path to train annotations> \
     --val_ann_path <abs path to val annotations> \
@@ -124,7 +124,7 @@ Text line inference is done via either the [infer_effocr.py](infer_effocr.py) or
 An example call to [infer_effocr.py](infer_effocr.py) would look like:
 
 ```bash
-python ./infer_ocr.py \
+python ./infer_effocr.py \
     --image_dir <path to text line images to be inferenced> \
     --infer_over_img_dir \
     --auto_model_timm <timm model name (same as used in recognizer training) \
@@ -138,7 +138,7 @@ python ./infer_ocr.py \
 The [infer_effocr_onnx_multi.py](infer_effocr_onnx_multi.py) script accepts localizer models in ONNX format from any of the backends mentioned above. It also expects a recognizer in ONNX format. A [conversion script](https://github.com/jscarlson/ocr-as-retrieval/blob/main/scripts/recognizer_onnx_export.py) is provided for convenience. [infer_effocr_onnx_multi.py](infer_effocr_onnx_multi.py) runs _only_ on the CPU and implements multithreading in an attempt to minimize inference time. An example call to `[infer_effocr_onnx_multi.py](infer_effocr_onnx_multi.py) would look like:
 
 ```bash
-python ./infer_ocr_onnx_multi.py \
+python ./infer_effocr_onnx_multi.py \
     --image_dir <path to text line images to be inferenced> \
     --recognizer_dir <directory with saved recognizer model as `enc_best.onnx`> \
     --localizer_dir <directory with saved localizer model as `best_bbox_mAP.onnx`> \
