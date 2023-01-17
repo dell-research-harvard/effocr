@@ -294,7 +294,8 @@ if __name__ == '__main__':
 
     # create save dir
 
-    os.makedirs(args.save_dir, exist_ok=True)
+    os.makedirs(args.crops_save_dir, exist_ok=True)
+    os.makedirs(args.dataset_save_dir, exist_ok=True)
 
     # load coco json
 
@@ -355,6 +356,7 @@ if __name__ == '__main__':
         font_files = [ff for ff in font_files if not any(ef in ff for ef in args.exclude_fonts.split(","))]
 
     print(f"Fonts being used: {font_files}")
+    print(f"Character sets being used: {charset_files}")
 
     # collect all chars of interest
 
