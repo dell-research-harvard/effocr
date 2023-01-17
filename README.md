@@ -22,11 +22,13 @@ pip install -r requirements.txt
 
 Separately, you'll also need to install 
 
-- [FAISS](https://github.com/facebookresearch/faiss/blob/main/INSTALL.md)
-- [PyTorch](https://pytorch.org/get-started/locally/)
-- [Detectron2](https://github.com/facebookresearch/detectron2/blob/main/INSTALL.md)
-- [MMDetection](https://github.com/open-mmlab/mmdetection/blob/master/docs/en/get_started.md/#Installation)
-- [YOLOv5](https://github.com/ultralytics/yolov5#documentation)
+- both
+    - [FAISS](https://github.com/facebookresearch/faiss/blob/main/INSTALL.md) and
+    - [PyTorch](https://pytorch.org/get-started/locally/)
+- as well as either
+    - [Detectron2](https://github.com/facebookresearch/detectron2/blob/main/INSTALL.md) or
+    - [MMDetection](https://github.com/open-mmlab/mmdetection/blob/master/docs/en/get_started.md/#Installation) or
+    - [YOLOv5](https://github.com/ultralytics/yolov5#documentation)
 
 as is appropriate for your use case.
 
