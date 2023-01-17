@@ -12,7 +12,7 @@ In this repo, we provide tools for training your own EffOCR models for your part
 
 ## Installation
 
-Clone this repo, then install [requirements.txt](requirements.txt) in an environment with `Python >= 3.7` and `Pytorch >= 1.7.0`.
+Clone this repo, then install [requirements.txt](requirements.txt) in an environment with `Python >= 3.7`. (To accommodate downloading GPU-compatible FAISS, as referenced below, it can be useful to first set up and activate a [conda](https://docs.anaconda.com/anaconda/install/index.html) environment before installing these required dependencies.)
 
 ```bash
 git clone git@github.com:dell-research-harvard/effocr.git
@@ -53,6 +53,10 @@ This COCO-formatted dataset can be used directly for localizer training, and can
 
 By default, English and Japanese language datasets are supported by EffOCR. Other languages are certainly compatible with the EffOCR framework, but it might require that you fork and modify this codebase as appropriate for your application of interest.
 
+## Logging
+
+By default, EffOCR supports logging with [Weights & Biases](https://wandb.ai/site). We encourage you therefore to set up a W&B account and initiate a `wandb login` command before starting out on the training process.
+
 ## Training
 
 ### Localizer 
@@ -63,7 +67,7 @@ To use the Detectron2-backend training localizer script, a character localizatio
 
 ```bash
 python ./train_effocr_localizer_d2.py \
-    --name <Weights and Biases run name> \
+    --name <W&B run name> \
     --config <absolute path to D2 config> \
     --dataset_name <name of Detectron2 dataset to be registered> \
     --dataset_root <absolute path to root dir for COCO formatted data> \
@@ -87,10 +91,10 @@ python format_effocr_recognizer_dataset.py \
     --image_dir <absolute path to COCO image dir> \  
     --coco_jsons <comma-separated absolute paths to COCO JSONs, e.g., /path/to/train.json,/path/to/test.json,/path/to/val.json> \
     --crops_save_dir <absolute path for saving glyph crops, an intermediate output> \
-    --cat_id <COCO category ID for cropping> \                         
+    --cat_id <COCO category ID for cropping, e.g., 0> \                         
     --clip_to_top_and_bottom              
-    --font_dir <absolute path to fonts for synthetic data mix in> \
-    --charset_dir <path to character sets for rendering synthetic data> \  
+    --font_dir <absolute path to fonts for synthetic data mix in, e.g., ./english_font_files> \
+    --charset_dir <path to character sets for rendering synthetic data, e.g., ./english_charsets> \  
     --dataset_save_dir <absolute path for saving recognizer dataset> \
     --padding <e.g. 0.05> \
     --spaces        
@@ -100,18 +104,18 @@ Recognizer models are trained via the [train_effocr_recognizer.py](train_effocr_
 
 ```bash
 python ./train_effocr_recognizer.py \
-    --root_dir_path <abs path to recognizer dataset> \
-    --train_ann_path <abs path to train annotations> \
-    --val_ann_path <abs path to val annotations> \
-    --test_ann_path <abs path to test annotations> \
-    --run_name <Weights and Biases run name for logging> \
+    --root_dir_path <abs path to recognizer dataset, specified in dataset_save_dir above> \
+    --train_ann_path <abs path to train annotations from COCO dataset> \
+    --val_ann_path <abs path to val annotations from COCO dataset> \
+    --test_ann_path <abs path to test annotations from COCO dataset> \
+    --run_name <W&B run name for logging> \
     --auto_model_timm <timm model name (see below)> \
     --batch_size <e.g. 128> \
     --num_epochs <e.g. 60> \
     --num_passes <e.g. 1 for Japanese, 10 for English> \
-    --lang <'en' for English character or 'jp' for Japanese> \
+    --lang <e.g., "en" for English character or "jp" for Japanese> \
     --lr <e.g. 2e-5> \
-    --imsize <must be compatible with timm model input> \
+    --imsize <must be compatible with timm model input, e.g., 224> \
     --infer_hardneg_k <e.g. 8> \
     --hns_txt_path <used in a second run, or if you have already created a hns.txt file, see below>
 ```
@@ -143,9 +147,9 @@ python ./infer_effocr.py \
     --image_dir <path to text line images to be inferenced> \
     --infer_over_img_dir \
     --auto_model_timm <timm model name (same as used in recognizer training) \
-    --recognizer_dir <directory with saved recognizer model as `enc_best.pth`> \
-    --localizer_dir <directory with saved localizer model as `best_bbox_mAP.pth` and config as `*.yaml` or `*.py`> \
-    --lang <'en' for English or 'jp' for Japanese>
+    --recognizer_dir <directory with saved recognizer model as "enc_best.pth"> \
+    --localizer_dir <directory with saved localizer model as "best_bbox_mAP.pth" and config as "*.yaml" or "*.py"> \
+    --lang <e.g., "en" for English or "jp" for Japanese>
     --rcnn_score_thr <e.g. 0.3>
     --save_output <optional, directory to save predictions to>
 ```
@@ -155,10 +159,10 @@ The [infer_effocr_onnx_multi.py](infer_effocr_onnx_multi.py) script accepts loca
 ```bash
 python ./infer_effocr_onnx_multi.py \
     --image_dir <path to text line images to be inferenced> \
-    --recognizer_dir <directory with saved recognizer model as `enc_best.onnx`> \
-    --localizer_dir <directory with saved localizer model as `best_bbox_mAP.onnx`> \
-    --localier_backend <where the localizer model was trained, one of `mmdetection`, `yolo`, or `detectron2` \
-    --lang <'en' for English or 'jp' for Japanese> \
+    --recognizer_dir <directory with saved recognizer model as "enc_best.onnx"> \
+    --localizer_dir <directory with saved localizer model as "best_bbox_mAP.onnx"> \
+    --localier_backend <where the localizer model was trained, one of "mmdetection", "yolo", or "detectron2" \
+    --lang <e.g., "en" for English or "jp" for Japanese> \
     --localizer_iou_thresh <e.g. 0.01> \
     --localizer_conf_thresh <e.g. 0.35> \
     --num_threads <N> \
