@@ -12,7 +12,7 @@ In this repo, we provide tools for training your own EffOCR models for your part
 
 ## Installation
 
-Clone this repo, then install [requirements.txt](requirements.txt) in an environment with `Python >= 3.7` and `Pytorch >= 1.7.0, <= 1.10.0`. 
+Clone this repo, then install [requirements.txt](requirements.txt) in an environment with `Python >= 3.7` and `Pytorch >= 1.7.0`.
 
 ```bash
 git clone git@github.com:dell-research-harvard/effocr.git
