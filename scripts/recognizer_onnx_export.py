@@ -17,7 +17,7 @@ import sys
 sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 from models.encoders import *
 from models.classifiers import *
-from datasets.recognizer_datasets import *
+from effocr_datasets.recognizer_datasets import *
 from utils.datasets_utils import *
 
 

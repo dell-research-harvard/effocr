@@ -18,7 +18,7 @@ from collections import defaultdict
 
 from models.encoders import *
 from models.classifiers import *
-from datasets.recognizer_datasets import * # make sure Huggingface datasets is not installed...
+from effocr_datasets.recognizer_datasets import * # make sure Huggingface datasets is not installed...
 from utils.datasets_utils import INV_NORMALIZE
 
 

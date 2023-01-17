@@ -5,7 +5,7 @@ from torchvision.datasets.folder import IMG_EXTENSIONS, default_loader
 import os
 import json
 
-from datasets.recognizer_samplers import *
+from effocr_datasets.recognizer_samplers import *
 from utils.datasets_utils import *
 
 

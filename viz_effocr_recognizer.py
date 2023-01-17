@@ -10,7 +10,7 @@ import os
 
 from models.encoders import *
 from models.classifiers import *
-from datasets.recognizer_datasets import *
+from effocr_datasets.recognizer_datasets import *
 from utils.datasets_utils import *
 
 

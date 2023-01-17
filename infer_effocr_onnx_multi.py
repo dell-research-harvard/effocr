@@ -35,12 +35,12 @@ from deepsparse.pipelines.custom_pipeline import CustomTaskPipeline
 
 sys.path.insert(0, "../")
 from utils.datasets_utils import *
-from datasets.effocr_datasets import *
+from effocr_datasets.inference_datasets import *
 from utils.eval_utils import *
 from utils.coco_utils import *
 from utils.spell_check_utils import *
-from engines.localizer_engine import EffLocalizer
-from engines.recognizer_engine import EffRecognizer
+from onnx_engines.localizer_engine import EffLocalizer
+from onnx_engines.recognizer_engine import EffRecognizer
 
 
 LARGE_NUMBER = 1_000_000_000

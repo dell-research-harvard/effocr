@@ -24,12 +24,11 @@ sys.path.insert(0, '/..')
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from utils.datasets_utils import *
 from models.encoders import AutoEncoderFactory
-from datasets.effocr_datasets import *
-from utils.localizer_utils import *
+from effocr_datasets.inference_datasets import *
 from utils.coco_utils import *
 from utils.spell_check_utils import *
 from models.classifiers import AutoClassifierFactory
-from datasets.recognizer_datasets import create_render_dataset
+from effocr_datasets.recognizer_datasets import create_render_dataset
 
 DEFAULT_MEAN = np.array([123.675, 116.28, 103.53], dtype=np.float32)
 DEFAULT_STD = np.array([58.395, 57.12, 57.375], dtype=np.float32)
