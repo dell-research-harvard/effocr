@@ -20,6 +20,16 @@ cd effocr
 pip install -r requirements.txt
 ```
 
+Separately, you'll also need to install 
+
+- [FAISS](https://github.com/facebookresearch/faiss/blob/main/INSTALL.md)
+- [PyTorch](https://pytorch.org/get-started/locally/)
+- [Detectron2](https://github.com/facebookresearch/detectron2/blob/main/INSTALL.md)
+- [MMDetection](https://github.com/open-mmlab/mmdetection/blob/master/docs/en/get_started.md/#Installation)
+- [YOLOv5](https://github.com/ultralytics/yolov5#documentation)
+
+as is appropriate for your use case.
+
 ## Dataset Formatting
 
 For the purposes of training and evaluating EffOCR localizers and recognizers, we require that your dataset of interest is transcribed into the [COCO format](https://www.immersivelimit.com/tutorials/create-coco-annotations-from-scratch) with annotations at the character level, and with image level text fields that denote the transcription of the text line image, e.g., 
@@ -82,7 +92,8 @@ python format_effocr_recognizer_dataset.py \
     --font_dir <absolute path to fonts for synthetic data mix in> \
     --charset_dir <path to character sets for rendering synthetic data> \  
     --dataset_save_dir <absolute path for saving recognizer dataset> \
-    --padding <e.g. 0.05>         
+    --padding <e.g. 0.05> \
+    --spaces        
 ```
 
 Recognizer models are trained via the [train_effocr_recognizer.py](train_effocr_recognizer.py) script. Example usage is as follows:
@@ -153,3 +164,7 @@ python ./infer_effocr_onnx_multi.py \
     --num_threads <N> \
     --save_output <optional, directory to save predictions to>
 ```
+
+## Synthetic Data Generation
+
+If you're interested in synthetic data generation for, e.g., localizer pre-training, then you may also be interested in the companion repo to EffOCR, [EffSynth](https://github.com/dell-research-harvard/effsynth).
