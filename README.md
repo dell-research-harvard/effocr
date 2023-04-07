@@ -1,6 +1,6 @@
 # EffOCR
 
-This repository contains the official implementation of [EffOCR](link to paper, forthcoming). EffOCR is an OCR architecture that emphasizes sample (and computational) efficiency without compromising on accuracy! EffOCR accomplishes this by treating text recognition not as a sequence/language modeling task, but as a metric learning/image retrieval task.
+This repository contains the official implementation of [EffOCR](https://arxiv.org/abs/2304.02737). EffOCR is an OCR architecture that emphasizes sample (and computational) efficiency without compromising on accuracy! EffOCR accomplishes this by treating text recognition not as a sequence/language modeling task, but as a metric learning/image retrieval task.
 
 ![EffOCR vs. Seq2Seq](misc/arch.png)
 
@@ -129,7 +129,7 @@ import timm
 print(timm.list_models(pretrained=True))
 ```
 
-We recommend many of the models used in the [EffOCR paper](link to paper, forthcoming), including:
+We recommend many of the models used in the [EffOCR paper](https://arxiv.org/abs/2304.02737), including:
  - `mobilenetv3_small_050`
  - `convnext_tiny`
  - `xcit_small_12_p8_224`
